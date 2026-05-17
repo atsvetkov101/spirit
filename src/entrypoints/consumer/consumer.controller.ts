@@ -1,0 +1,29 @@
+import { Controller, Get } from '@nestjs/common';
+import { EventPattern, Payload, Ctx, RmqContext } from '@nestjs/microservices';
+import { ConsumerService } from './consumer.service';
+
+@Controller()
+export class ConsumerController {
+  constructor(private readonly consumerService: ConsumerService) {}
+
+  @Get('health')
+  health() {
+    return { status: 'ok', service: 'consumer' };
+  }
+
+  @EventPattern('user_created')
+  handleUserCreated(@Payload() data: any, @Ctx() context: RmqContext) {
+    this.consumerService.handleUserCreated(data);
+    const channel = context.getChannelRef();
+    const originalMessage = context.getMessage();
+    channel.ack(originalMessage);
+  }
+
+  @EventPattern('order_placed')
+  handleOrderPlaced(@Payload() data: any, @Ctx() context: RmqContext) {
+    this.consumerService.handleOrderPlaced(data);
+    const channel = context.getChannelRef();
+    const originalMessage = context.getMessage();
+    channel.ack(originalMessage);
+  }
+}
