@@ -1,6 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { EventPattern, Payload, Ctx, RmqContext } from '@nestjs/microservices';
 import { ConsumerService } from './consumer.service';
+import { TicketImportDto } from '../../contracts/consumer/ticket-import.dto';
 
 @Controller()
 export class ConsumerController {
@@ -22,6 +23,14 @@ export class ConsumerController {
   @EventPattern('order_placed')
   handleOrderPlaced(@Payload() data: any, @Ctx() context: RmqContext) {
     this.consumerService.handleOrderPlaced(data);
+    const channel = context.getChannelRef();
+    const originalMessage = context.getMessage();
+    channel.ack(originalMessage);
+  }
+
+  @EventPattern('ticket_import')
+  handleTicketImport(@Payload() data: any, @Ctx() context: RmqContext) {
+    this.consumerService.handleTicketImport(data);
     const channel = context.getChannelRef();
     const originalMessage = context.getMessage();
     channel.ack(originalMessage);
