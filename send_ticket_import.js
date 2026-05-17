@@ -6,10 +6,10 @@ async function send() {
   const queue = 'default_queue';
   
   const message = {
-    pattern: 'user_created',
+    pattern: 'ticket_import',
     data: {
       action: 'user_created',
-      id: 1,
+      id: 2,
       email: 'hello@example.com'
     },
     id: 'optional-uuid-for-request-response'
