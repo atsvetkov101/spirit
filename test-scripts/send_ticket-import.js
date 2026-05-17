@@ -16,7 +16,7 @@ async function sendTicketImportMessage() {
     
     // Создание тестового сообщения в соответствии с TicketImportDto
     const data = {
-      id: 'ticket-12345',
+      id: '33fe2288-1550-40a6-9607-123531e901c9',
       consumer_id: 1,
       consumer_email: 'user@example.com',
       assignee_id: 2,
