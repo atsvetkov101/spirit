@@ -29,7 +29,7 @@ export class ConsumerController {
   }
 
   @EventPattern('ticket_import')
-  handleTicketImport(@Payload() data: any, @Ctx() context: RmqContext) {
+  handleTicketImport(@Payload() data: TicketImportDto, @Ctx() context: RmqContext) {
     this.consumerService.handleTicketImport(data);
     const channel = context.getChannelRef();
     const originalMessage = context.getMessage();

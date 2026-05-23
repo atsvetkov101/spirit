@@ -40,7 +40,7 @@ export class ConsumerService {
           is_service_change_available: data.is_service_change_available,
         };
 
-        const ticket = await Ticket.create(ticketData, { transaction });
+        const [ticket] = await Ticket.upsert(ticketData, { transaction });
 
         // Создание service_object
         const serviceObjectData: ServiceObjectCreationAttributes = {
@@ -53,7 +53,7 @@ export class ConsumerService {
           ticket_id: ticket.id,
         };
 
-        const serviceObject = await ServiceObject.create(serviceObjectData, { transaction });
+        const [serviceObject] = await ServiceObject.upsert(serviceObjectData, { transaction });
 
         return { ticket, serviceObject };
       });

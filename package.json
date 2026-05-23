@@ -21,7 +21,7 @@
     "test:ticket-import": "node test-scripts/send_ticket-import.js",
     "test:send_test": "node send_test.js",
     "test:send_order": "node send_order.js",
-    "test:send_ticket_import": "node send_ticket_import.js"
+    "test:send_ticket_import": "node test-scripts/send_ticket_import.js"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
