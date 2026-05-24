@@ -1,7 +1,5 @@
 import { TicketImportDto } from "@/contracts/consumer/ticket-import.dto";
-import { Ticket, TicketCreationAttributes } from "@/models/ticket.model";
 import { Email } from "@/vo/email";
-import { Transaction } from 'sequelize';
 
 export class TicketEntity {
     constructor(dto: TicketImportDto) {
@@ -49,24 +47,48 @@ export class TicketEntity {
     getId(): string {
         return this.id;
     }
-    
-    public async save(transaction: Transaction | null = null): Promise<string> {
-        const ticketData: TicketCreationAttributes = {
-            id: this.id,
-            consumer_id: this.consumer_id,
-            consumer_email: this.consumer_email.getValue(),
-            assignee_id: this.assignee_id,
-            status: this.status,
-            service: this.service,
-            created_by: this.created_by,
-            created_time: new Date(this.created_time),
-            deadline: new Date(this.deadline),
-            act_type: this.act_type,
-            wiki_link: this.wiki_link,
-            is_service_change_available: this.is_service_change_available,
-        };
 
-        const [ticket] = await Ticket.upsert(ticketData, { transaction });
-        return ticket.id;
+    getConsumerId(): number {
+        return this.consumer_id;
+    }
+
+    getConsumerEmail(): Email {
+        return this.consumer_email;
+    }
+
+    getAssigneeId(): number {
+        return this.assignee_id;
+    }
+
+    getStatus(): string {
+        return this.status;
+    }
+
+    getService(): string {
+        return this.service;
+    }
+
+    getCreatedBy(): number {
+        return this.created_by;
+    }
+
+    getCreatedTime(): Date {
+        return this.created_time;
+    }
+
+    getDeadline(): Date {
+        return this.deadline;
+    }
+
+    getActType(): string {
+        return this.act_type;
+    }
+
+    getWikiLink(): string {
+        return this.wiki_link;
+    }
+
+    isServiceChangeAvailable(): boolean {
+        return this.is_service_change_available;
     }
 }

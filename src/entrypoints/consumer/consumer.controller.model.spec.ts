@@ -3,9 +3,10 @@
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConsumerController } from './consumer.controller';
-import { ConsumerService } from './consumer.service';
+import { ConsumerService, TICKET_REPOSITORY } from './consumer.service';
 import { TicketImportDto } from '../../contracts/consumer/ticket-import.dto';
 import { RmqContext } from '@nestjs/microservices';
+import { TicketRepository } from '@/infrastructure/ticket-repository';
 
 // Моки для моделей и sequelize
 jest.mock('../../models/ticket.model', () => ({
@@ -63,7 +64,8 @@ describe('Тесты Consumer Controller Model', () => {
       // Сбросим моки
       jest.clearAllMocks();
 
-      const mockTicketInstance = { id: 'ticket-id' };
+      const ticketData = createTicketData();
+      const mockTicketInstance = { id: ticketData.id };
       const mockServiceObjectInstance = { id: 'service-object-id' };
 
       // Настраиваем моки (транзакция больше не используется)
@@ -81,12 +83,16 @@ describe('Тесты Consumer Controller Model', () => {
       // Создаем модуль с реальным ConsumerService и ConsumerController
       const testingModule: TestingModule = await Test.createTestingModule({
         controllers: [ConsumerController],
-        providers: [ConsumerService],
+        providers: [
+          ConsumerService,
+          {
+            provide: TICKET_REPOSITORY,
+            useClass: TicketRepository,
+          },
+        ],
       }).compile();
 
       const realConsumerController = testingModule.get<ConsumerController>(ConsumerController);
-
-      const ticketData = createTicketData();
 
       // Вызываем метод контроллера
       await realConsumerController.handleTicketImport(ticketData, mockRmqContext);
