@@ -63,14 +63,10 @@ describe('Тесты Consumer Controller Model', () => {
       // Сбросим моки
       jest.clearAllMocks();
 
-      const mockTransaction = { commit: jest.fn(), rollback: jest.fn() };
       const mockTicketInstance = { id: 'ticket-id' };
       const mockServiceObjectInstance = { id: 'service-object-id' };
 
-      // Настраиваем моки
-      MockSequelize.transaction.mockImplementation(async (callback: any) => {
-        return callback(mockTransaction);
-      });
+      // Настраиваем моки (транзакция больше не используется)
       (MockTicket.upsert as jest.Mock).mockResolvedValue([mockTicketInstance, true]);
       (MockServiceObject.upsert as jest.Mock).mockResolvedValue([mockServiceObjectInstance, true]);
 
@@ -95,8 +91,8 @@ describe('Тесты Consumer Controller Model', () => {
       // Вызываем метод контроллера
       await realConsumerController.handleTicketImport(ticketData, mockRmqContext);
 
-      // Проверяем, что transaction был вызван
-      expect(MockSequelize.transaction).toHaveBeenCalledTimes(1);
+      // Проверяем, что transaction НЕ был вызван (так как транзакция убрана)
+      expect(MockSequelize.transaction).not.toHaveBeenCalled();
 
       // Проверяем вызов Ticket.upsert с корректными данными
       expect(MockTicket.upsert).toHaveBeenCalledTimes(1);
@@ -115,7 +111,8 @@ describe('Тесты Consumer Controller Model', () => {
         wiki_link: ticketData.wiki_link,
         is_service_change_available: ticketData.is_service_change_available,
       });
-      expect(ticketUpsertArgs[1]).toEqual({ transaction: mockTransaction });
+      // Второй аргумент должен быть { transaction: null } (по умолчанию передается null)
+      expect(ticketUpsertArgs[1]).toEqual({ transaction: null });
 
       // Проверяем вызов ServiceObject.upsert с корректными данными
       expect(MockServiceObject.upsert).toHaveBeenCalledTimes(1);
@@ -129,7 +126,7 @@ describe('Тесты Consumer Controller Model', () => {
         phone_number: ticketData.service_object.phone_number,
         ticket_id: mockTicketInstance.id,
       });
-      expect(serviceObjectUpsertArgs[1]).toEqual({ transaction: mockTransaction });
+      expect(serviceObjectUpsertArgs[1]).toEqual({ transaction: null });
 
       // Проверяем, что ack был вызван
       expect(mockRmqContext.getChannelRef).toHaveBeenCalled();

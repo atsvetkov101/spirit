@@ -23,21 +23,18 @@ export class ConsumerService {
     this.logger.log(`Received ticket-import event: ${JSON.stringify(data)}`);
     
     try {
-      const result = await sequelize.transaction(async (transaction) => {
-        // Сохранение тикета и service_object в транзакции
-        const ticket = TicketEntity.fromDto(data);
-        const ticketId = await ticket.save(transaction);
-        
-        const serviceObjectDto: ServiceObjectImportDto = data.service_object;
-        const serviceObject = ServiceObjectEntity.fromDto(serviceObjectDto, ticketId);
-        const serviceObjectId = await serviceObject.save(transaction);
+      // Сохранение тикета и service_object без транзакции
+      const ticket = TicketEntity.fromDto(data);
+      const ticketId = await ticket.save();
+      
+      const serviceObjectDto: ServiceObjectImportDto = data.service_object;
+      const serviceObject = ServiceObjectEntity.fromDto(serviceObjectDto, ticketId);
+      const serviceObjectId = await serviceObject.save();
 
-        this.logger.log(`Ticket saved successfully with ID: ${ticket.getId()}`);
-        this.logger.log(`ServiceObject saved successfully with ID: ${serviceObject.getId()}`);
-        
-        return { ticketId, serviceObjectId };
-      });
-      return result;
+      this.logger.log(`Ticket saved successfully with ID: ${ticket.getId()}`);
+      this.logger.log(`ServiceObject saved successfully with ID: ${serviceObject.getId()}`);
+      
+      return { ticketId, serviceObjectId };
     } catch (error) {
       const err = error as Error;
       this.logger.error(`Failed to save ticket: ${err.message}`, err.stack);
