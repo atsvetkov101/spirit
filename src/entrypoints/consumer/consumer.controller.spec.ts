@@ -73,10 +73,10 @@ describe('ConsumerController', () => {
       },
     });
 
-    it('должен вызывать consumerService.handleTicketImport с корректными данными и подтверждать сообщение', () => {
+    it('должен вызывать consumerService.handleTicketImport с корректными данными и подтверждать сообщение', async () => {
       const ticketData = createTicketData();
 
-      controller.handleTicketImport(ticketData, mockRmqContext);
+      await controller.handleTicketImport(ticketData, mockRmqContext);
 
       expect(consumerService.handleTicketImport).toHaveBeenCalledWith(ticketData);
       expect(mockRmqContext.getChannelRef).toHaveBeenCalled();
@@ -84,17 +84,15 @@ describe('ConsumerController', () => {
       expect(mockChannel.ack).toHaveBeenCalledWith(mockMessage);
     });
 
-    it('при синхронной ошибке в сервисе не должен вызывать getChannelRef, getMessage и ack', () => {
+    it('при ошибке в сервисе не должен вызывать getChannelRef, getMessage и ack', async () => {
       const ticketData = createTicketData();
       const error = new Error('Service error');
-      consumerService.handleTicketImport.mockImplementation(() => {
-        throw error;
-      });
+      consumerService.handleTicketImport.mockRejectedValue(error);
 
-      expect(() => controller.handleTicketImport(ticketData, mockRmqContext)).toThrow(error);
+      await expect(controller.handleTicketImport(ticketData, mockRmqContext)).rejects.toThrow(error);
 
       expect(consumerService.handleTicketImport).toHaveBeenCalledWith(ticketData);
-      // При синхронной ошибке следующие вызовы не должны происходить
+      // При ошибке следующие вызовы не должны происходить
       expect(mockRmqContext.getChannelRef).not.toHaveBeenCalled();
       expect(mockRmqContext.getMessage).not.toHaveBeenCalled();
       expect(mockChannel.ack).not.toHaveBeenCalled();
@@ -105,8 +103,8 @@ describe('ConsumerController', () => {
       const ticketData = createTicketData();
       // Создаем фиктивные объекты, которые возвращает сервис
       const mockResult = {
-        ticket: { id: ticketData.id } as any,
-        serviceObject: { id: 'service-obj-id' } as any,
+        ticketId: ticketData.id,
+        serviceObjectId: 'service-obj-id',
       };
       consumerService.handleTicketImport.mockResolvedValue(mockResult);
 
