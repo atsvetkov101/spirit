@@ -3,10 +3,11 @@
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConsumerController } from './consumer.controller';
-import { ConsumerService, TICKET_REPOSITORY } from './consumer.service';
+import { ConsumerService, TICKET_REPOSITORY, SERVICE_OBJECT_REPOSITORY } from './consumer.service';
 import { TicketImportDto } from '../../contracts/consumer/ticket-import.dto';
 import { RmqContext } from '@nestjs/microservices';
 import { TicketRepository } from '@/infrastructure/ticket-repository';
+import { ServiceObjectRepository } from '@/infrastructure/service-object-repository';
 
 // Моки для моделей и sequelize
 jest.mock('../../models/ticket.model', () => ({
@@ -88,6 +89,10 @@ describe('Тесты Consumer Controller Model', () => {
           {
             provide: TICKET_REPOSITORY,
             useClass: TicketRepository,
+          },
+          {
+            provide: SERVICE_OBJECT_REPOSITORY,
+            useClass: ServiceObjectRepository,
           },
         ],
       }).compile();

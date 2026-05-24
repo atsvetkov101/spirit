@@ -4,8 +4,10 @@ import { ServiceObjectImportDto } from '../../contracts/consumer/service-object-
 import { TicketEntity } from '@/core/entities/ticket-entity';
 import { ServiceObjectEntity } from '@/core/entities/service-object-entity';
 import { ITicketRepository } from '@/core/interfaces/iticket-repository';
+import { IServiceObjectRepository } from '@/core/interfaces/iservice-object-repository';
 
 export const TICKET_REPOSITORY = Symbol('TICKET_REPOSITORY');
+export const SERVICE_OBJECT_REPOSITORY = Symbol('SERVICE_OBJECT_REPOSITORY');
 
 @Injectable()
 export class ConsumerService {
@@ -14,6 +16,8 @@ export class ConsumerService {
   constructor(
     @Inject(TICKET_REPOSITORY)
     private readonly ticketRepository: ITicketRepository,
+    @Inject(SERVICE_OBJECT_REPOSITORY)
+    private readonly serviceObjectRepository: IServiceObjectRepository,
   ) {}
 
   handleUserCreated(data: any) {
@@ -37,10 +41,11 @@ export class ConsumerService {
       
       const serviceObjectDto: ServiceObjectImportDto = data.service_object;
       const serviceObject = ServiceObjectEntity.fromDto(serviceObjectDto, ticketId);
-      const serviceObjectId = await serviceObject.save();
+      await this.serviceObjectRepository.save(serviceObject);
+      const serviceObjectId = serviceObject.getId();
 
       this.logger.log(`Ticket saved successfully with ID: ${ticketId}`);
-      this.logger.log(`ServiceObject saved successfully with ID: ${serviceObject.getId()}`);
+      this.logger.log(`ServiceObject saved successfully with ID: ${serviceObjectId}`);
       
       return { ticketId, serviceObjectId };
     } catch (error) {

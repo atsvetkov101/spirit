@@ -1,6 +1,4 @@
 import { ServiceObjectImportDto } from "@/contracts/consumer/service-object-import.dto";
-import { ServiceObject, ServiceObjectCreationAttributes } from "@/models/service-object.model";
-import { Transaction } from 'sequelize';
 
 export class ServiceObjectEntity {
     constructor(dto: ServiceObjectImportDto, ticketId: string) {
@@ -25,30 +23,39 @@ export class ServiceObjectEntity {
         return new ServiceObjectEntity(dto, ticketId);
     }
 
-    getId(): string {
-        if (this.id === null) {
-            throw new Error('ServiceObject ID is not available before save');
-        }
+    getId(): string | null {
         return this.id;
     }
-    
-    public async save(transaction: Transaction | null = null): Promise<string> {
-        const serviceObjectData: ServiceObjectCreationAttributes = {
-            address: this.address,
-            name: this.name,
-            search_code: this.search_code,
-            lat: this.lat,
-            lng: this.lng,
-            phone_number: this.phone_number,
-            ticket_id: this.ticket_id,
-        };
-        // Если id уже есть (например, при обновлении), передаем его
-        if (this.id !== null) {
-            serviceObjectData.id = this.id;
-        }
 
-        const [serviceObject] = await ServiceObject.upsert(serviceObjectData, { transaction });
-        this.id = serviceObject.id;
-        return serviceObject.id;
+    getAddress(): string {
+        return this.address;
+    }
+
+    getName(): string {
+        return this.name;
+    }
+
+    getSearchCode(): string {
+        return this.search_code;
+    }
+
+    getLat(): string {
+        return this.lat;
+    }
+
+    getLng(): string {
+        return this.lng;
+    }
+
+    getPhoneNumber(): string {
+        return this.phone_number;
+    }
+
+    getTicketId(): string {
+        return this.ticket_id;
+    }
+
+    setId(id: string): void {
+        this.id = id;
     }
 }
