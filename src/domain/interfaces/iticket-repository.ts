@@ -1,4 +1,4 @@
-import { TicketEntity } from '@/core/entities/ticket-entity';
+import { TicketEntity } from '@/domain/entities/ticket-entity';
 
 export interface ITicketRepository {
   findById(id: string): Promise<TicketEntity | null>;

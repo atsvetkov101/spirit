@@ -1,10 +1,10 @@
 import { Injectable, Logger, Inject } from '@nestjs/common';
 import { TicketImportDto } from '../../contracts/consumer/ticket-import.dto';
 import { ServiceObjectImportDto } from '../../contracts/consumer/service-object-import.dto';
-import { TicketEntity } from '@/core/entities/ticket-entity';
-import { ServiceObjectEntity } from '@/core/entities/service-object-entity';
-import { ITicketRepository } from '@/core/interfaces/iticket-repository';
-import { IServiceObjectRepository } from '@/core/interfaces/iservice-object-repository';
+import { TicketEntity } from '@/domain/entities/ticket-entity';
+import { ServiceObjectEntity } from '@/domain/entities/service-object-entity';
+import { ITicketRepository } from '@/domain/interfaces/iticket-repository';
+import { IServiceObjectRepository } from '@/domain/interfaces/iservice-object-repository';
 
 export const TICKET_REPOSITORY = Symbol('TICKET_REPOSITORY');
 export const SERVICE_OBJECT_REPOSITORY = Symbol('SERVICE_OBJECT_REPOSITORY');

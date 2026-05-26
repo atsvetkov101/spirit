@@ -6,8 +6,8 @@ import { ConsumerController } from './consumer.controller';
 import { ConsumerService, TICKET_REPOSITORY, SERVICE_OBJECT_REPOSITORY } from './consumer.service';
 import { TicketImportDto } from '../../contracts/consumer/ticket-import.dto';
 import { RmqContext } from '@nestjs/microservices';
-import { TicketRepository } from '@/infrastructure/ticket-repository';
-import { ServiceObjectRepository } from '@/infrastructure/service-object-repository';
+import { TicketRepository } from '@/domain/repository/ticket-repository';
+import { ServiceObjectRepository } from '@/domain/repository/service-object-repository';
 
 // Моки для моделей и sequelize
 jest.mock('../../models/ticket.model', () => ({

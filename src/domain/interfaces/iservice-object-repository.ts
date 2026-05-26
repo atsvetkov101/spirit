@@ -1,4 +1,4 @@
-import { ServiceObjectEntity } from '@/core/entities/service-object-entity';
+import { ServiceObjectEntity } from '@/domain/entities/service-object-entity';
 
 export interface IServiceObjectRepository {
   findById(id: string): Promise<ServiceObjectEntity | null>;

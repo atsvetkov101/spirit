@@ -1,5 +1,5 @@
 import { TicketImportDto } from "@/contracts/consumer/ticket-import.dto";
-import { Email } from "@/vo/email";
+import { Email } from "@/domain/vo/email";
 
 export class TicketEntity {
     constructor(dto: TicketImportDto) {
