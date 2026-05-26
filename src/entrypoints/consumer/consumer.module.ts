@@ -2,8 +2,8 @@ import { Module, OnModuleInit } from '@nestjs/common';
 import { ConsumerService, TICKET_REPOSITORY, SERVICE_OBJECT_REPOSITORY } from './consumer.service';
 import { ConsumerController } from './consumer.controller';
 import { syncDatabase } from '../../database';
-import { TicketRepository } from '@/infrastructure/ticket-repository';
-import { ServiceObjectRepository } from '@/infrastructure/service-object-repository';
+import { TicketRepository } from '@/domain/repository/ticket-repository';
+import { ServiceObjectRepository } from '@/domain/repository/service-object-repository';
 
 @Module({
   imports: [],

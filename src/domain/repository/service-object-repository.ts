@@ -1,7 +1,7 @@
-import { ServiceObjectEntity } from '@/core/entities/service-object-entity';
+import { ServiceObjectEntity } from '@/domain/entities/service-object-entity';
 import { ServiceObject, ServiceObjectCreationAttributes } from '@/models/service-object.model';
 import { Transaction } from 'sequelize';
-import { IServiceObjectRepository } from '@/core/interfaces/iservice-object-repository';
+import { IServiceObjectRepository } from '@/domain/interfaces/iservice-object-repository';
 
 export class ServiceObjectRepository implements IServiceObjectRepository {
   async save(aggregate: ServiceObjectEntity, transaction: Transaction | null = null): Promise<void> {
