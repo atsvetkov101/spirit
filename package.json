@@ -21,7 +21,7 @@
     "test:ticket-import": "node test-scripts/send_ticket-import.js",
     "test:send_test": "node send_test.js",
     "test:send_order": "node send_order.js",
-    "test:send_ticket_import": "node send_ticket_import.js"
+    "test:send_ticket_import": "node test-scripts/send_ticket_import.js"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -41,8 +41,8 @@
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
     "@types/express": "^4.17.17",
-    "@types/jest": "^29.5.0",
-    "@types/node": "^20.0.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^20.19.41",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "concurrently": "^8.2.2",

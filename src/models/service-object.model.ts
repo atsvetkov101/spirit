@@ -47,6 +47,7 @@ ServiceObject.init(
     search_code: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true // делаем поле уникальным - для правильной работы upsert
     },
     lat: {
       type: DataTypes.STRING,
