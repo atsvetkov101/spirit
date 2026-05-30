@@ -34,7 +34,7 @@ export class Money {
     }
   }
   
-  subtract(money: Money): Money {   
+  subtract(money: Money): Money {
     if (this.currency !== money.currency) {
         throw new Error(`Невозможно вычесть две разные валюты: ${this.currency} and ${money.currency}`);
     }
@@ -43,6 +43,13 @@ export class Money {
     } else {
         throw new Error(`Недостаточно средств для операции: ${this.amount} < ${money.amount}`);
     }
+  }
+
+  multiply(factor: number): Money {
+    if (factor < 0) {
+        throw new Error(`Множитель не может быть отрицательным: ${factor}`);
+    }
+    return new Money(this.amount * factor, this.currency);
   }
   
   format(): string {
