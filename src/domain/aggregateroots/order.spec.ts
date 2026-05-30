@@ -11,44 +11,26 @@ describe('Тесты для агрегата Order', () => {
     return OrderLine.create(product, quantity, id);
   }
 
-  describe('создание через статический метод create', () => {
-    it('должен создать Order с переданным id', () => {
-      const order = Order.create('order-001');
-
-      expect(order.getId()).toBe('order-001');
-      expect(order.getItems()).toEqual([]);
-    });
-
-    it('должен создать Order с автоматически сгенерированным id', () => {
-      const order = Order.create();
-
-      expect(order.getId()).toBeDefined();
-      expect(typeof order.getId()).toBe('string');
-      expect(order.getId().length).toBeGreaterThan(0);
-      expect(order.getItems()).toEqual([]);
-    });
-  });
-
   describe('конструктор (валидация id)', () => {
     it('должен выбросить ошибку, если id пустой', () => {
-      expect(() => Order.create('')).toThrow('ID заказа не может быть пустым');
+      expect(() => new Order('')).toThrow('ID заказа не может быть пустым');
     });
 
     it('должен выбросить ошибку, если id состоит только из пробелов', () => {
-      expect(() => Order.create('   ')).toThrow('ID заказа не может быть пустым');
+      expect(() => new Order('   ')).toThrow('ID заказа не может быть пустым');
     });
   });
 
   describe('getId', () => {
     it('должен вернуть id заказа', () => {
-      const order = Order.create('order-001');
+      const order = new Order('order-001');
       expect(order.getId()).toBe('order-001');
     });
   });
 
   describe('addItem', () => {
     it('должен добавить OrderLine в заказ', () => {
-      const order = Order.create('order-001');
+      const order = new Order('order-001');
       const line = makeOrderLine(validProduct, 2, 'line-001');
 
       order.addItem(line);
@@ -58,7 +40,7 @@ describe('Тесты для агрегата Order', () => {
     });
 
     it('должен добавить несколько позиций в заказ', () => {
-      const order = Order.create('order-001');
+      const order = new Order('order-001');
       const line1 = makeOrderLine(validProduct, 1, 'line-001');
       const line2 = makeOrderLine(validProduct2, 3, 'line-002');
 
@@ -69,7 +51,7 @@ describe('Тесты для агрегата Order', () => {
     });
 
     it('должен выбросить ошибку при превышении лимита в 10 товаров', () => {
-      const order = Order.create('order-001');
+      const order = new Order('order-001');
 
       for (let i = 0; i < 10; i++) {
         order.addItem(makeOrderLine(validProduct, 1, `line-${i}`));
@@ -81,7 +63,7 @@ describe('Тесты для агрегата Order', () => {
     });
 
     it('должен сохранить 10 элементов при добавлении ровно 10', () => {
-      const order = Order.create('order-001');
+      const order = new Order('order-001');
 
       for (let i = 0; i < 10; i++) {
         order.addItem(makeOrderLine(validProduct, 1, `line-${i}`));
@@ -93,7 +75,7 @@ describe('Тесты для агрегата Order', () => {
 
   describe('removeItem', () => {
     it('должен удалить OrderLine по id', () => {
-      const order = Order.create('order-001');
+      const order = new Order('order-001');
       const line1 = makeOrderLine(validProduct, 1, 'line-001');
       const line2 = makeOrderLine(validProduct2, 2, 'line-002');
 
@@ -107,7 +89,7 @@ describe('Тесты для агрегата Order', () => {
     });
 
     it('должен выбросить ошибку, если строка с указанным id не найдена', () => {
-      const order = Order.create('order-001');
+      const order = new Order('order-001');
       order.addItem(makeOrderLine(validProduct, 1, 'line-001'));
 
       expect(() => order.removeItem('non-existent')).toThrow(
@@ -118,7 +100,7 @@ describe('Тесты для агрегата Order', () => {
 
   describe('getItems', () => {
     it('должен вернуть пустой массив для нового заказа', () => {
-      const order = Order.create('order-001');
+      const order = new Order('order-001');
 
       expect(order.getItems()).toEqual([]);
     });
@@ -127,7 +109,7 @@ describe('Тесты для агрегата Order', () => {
      * Проверяем: "внешний код не может напрямую изменить коллекцию строк заказа в обход корня"
      */
     it('должен вернуть копию массива (иммутабельность)', () => {
-      const order = Order.create('order-001');
+      const order = new Order('order-001');
       const line = makeOrderLine(validProduct, 1, 'line-001');
       order.addItem(line);
 
@@ -142,13 +124,13 @@ describe('Тесты для агрегата Order', () => {
 
   describe('getTotal', () => {
     it('должен выбросить ошибку для пустого заказа', () => {
-      const order = Order.create('order-001');
+      const order = new Order('order-001');
 
       expect(() => order.getTotal()).toThrow('Невозможно подсчитать сумму пустого заказа');
     });
 
     it('должен вернуть сумму одной позиции', () => {
-      const order = Order.create('order-001');
+      const order = new Order('order-001');
       order.addItem(makeOrderLine(validProduct, 3, 'line-001')); // 1000 * 3 = 3000
 
       const total = order.getTotal();
@@ -157,7 +139,7 @@ describe('Тесты для агрегата Order', () => {
     });
 
     it('должен вернуть сумму нескольких позиций', () => {
-      const order = Order.create('order-001');
+      const order = new Order('order-001');
       order.addItem(makeOrderLine(validProduct, 2, 'line-001'));  // 1000 * 2 = 2000
       order.addItem(makeOrderLine(validProduct2, 3, 'line-002')); //  500 * 3 = 1500
 
@@ -167,7 +149,7 @@ describe('Тесты для агрегата Order', () => {
     });
 
     it('должен корректно считать сумму после удаления позиции', () => {
-      const order = Order.create('order-001');
+      const order = new Order('order-001');
       order.addItem(makeOrderLine(validProduct, 2, 'line-001'));  // 2000
       order.addItem(makeOrderLine(validProduct2, 3, 'line-002')); // 1500
 
@@ -178,7 +160,7 @@ describe('Тесты для агрегата Order', () => {
     });
 
     it('должен выбросить ошибку при подсчёте суммы после удаления всех позиций', () => {
-      const order = Order.create('order-001');
+      const order = new Order('order-001');
       order.addItem(makeOrderLine(validProduct, 1, 'line-001'));
       order.removeItem('line-001');
 

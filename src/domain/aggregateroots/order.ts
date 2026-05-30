@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import { OrderLine } from "../entities/order-line";
 import { Money } from "../vo/money";
 
@@ -14,16 +13,12 @@ export class Order {
     private readonly id: string;
     private readonly items: OrderLine[];
 
-    private constructor(id: string, items: OrderLine[] = []) {
+    constructor(id: string, items: OrderLine[] = []) {
         if (!id || id.trim() === '') {
             throw new Error('ID заказа не может быть пустым');
         }
         this.id = id;
         this.items = [...items];
-    }
-
-    static create(id?: string): Order {
-        return new Order(id ?? uuidv4());
     }
 
     addItem(item: OrderLine): void {
