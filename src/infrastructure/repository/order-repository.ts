@@ -1,4 +1,4 @@
-import { Order } from "@/domain/aggregateroots/order";
+import { Order } from "@/domain/entities/order";
 import { IOrderRepository } from "@/domain/repository/iorder-repository";
 
 export class OrderRepository implements IOrderRepository {

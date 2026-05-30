@@ -1,6 +1,6 @@
 import { Order } from './order';
-import { OrderLine } from '../entities/order-line';
-import { Product } from '../entities/product';
+import { OrderLine } from './order-line';
+import { Product } from './product';
 import { Money } from '../vo/money';
 
 describe('Тесты для агрегата Order', () => {

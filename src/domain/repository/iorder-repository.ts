@@ -1,4 +1,4 @@
-import { Order } from "@/domain/aggregateroots/order";
+import { Order } from "@/domain/entities/order";
 
 export interface IOrderRepository {
     getById(id: string): Promise<Order | null>;

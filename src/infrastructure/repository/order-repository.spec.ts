@@ -1,5 +1,5 @@
 import { OrderRepository } from './order-repository';
-import { Order } from '@/domain/aggregateroots/order';
+import { Order } from '@/domain/entities/order';
 import { OrderLine } from '@/domain/entities/order-line';
 import { Product } from '@/domain/entities/product';
 import { Money } from '@/domain/vo/money';

@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Order } from "../aggregateroots/order";
+import { Order } from "../entities/order";
 import { OrderLine } from "../entities/order-line";
 import { Product } from "../entities/product";
 import { Money } from "../vo/money";
