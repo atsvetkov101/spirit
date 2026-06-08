@@ -1,5 +1,7 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Param, Post } from '@nestjs/common';
 import { AppService } from './app.service';
+import { ChangeStatusDto } from '@/application/dtos/change-status-dto';
+
 
 @Controller()
 export class AppController {
@@ -14,4 +16,13 @@ export class AppController {
   getHealth(): { status: string } {
     return this.appService.getHealth();
   }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('api/mobile/v1/change-status')
+  changeStatus(@Param() param: ChangeStatusDto) {
+    return { status: 'ok' };
+  }
+
+
+
 }
