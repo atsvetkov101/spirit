@@ -1,7 +1,7 @@
 import { TicketEntity } from '@/domain/entities/ticket-entity';
 import { Ticket, TicketCreationAttributes } from '@/models/ticket.model';
 import { Transaction } from 'sequelize';
-import { ITicketRepository } from '@/domain/interfaces/iticket-repository';
+import { ITicketRepository } from '@/domain/repository/iticket-repository';
 
 export class TicketRepository implements ITicketRepository {
   async save(aggregate: TicketEntity, transaction: Transaction | null = null): Promise<void> {

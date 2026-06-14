@@ -8,7 +8,7 @@ type  WorkData = {
 export class ChangeStatusDto {
   ticketId!: string;
   serviceId!: string;
-  checkList!: {
+  checkList?: {
     works: WorkData[];
   };
 }

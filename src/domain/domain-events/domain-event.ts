@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
+import { IDomainEvent } from '../shared/idomain-event';
 
-export class DomainEvent {
+export class DomainEvent implements IDomainEvent {
   private eventId: string;
   private occurredAt: Date;
   get EventId() : string {
@@ -10,7 +11,9 @@ export class DomainEvent {
     return this.occurredAt;
   };
   constructor(eventId: string = uuidv4(),
-    occurredAt: Date = new Date()) {
+    occurredAt: Date = new Date(),
+
+  ) {
     this.eventId = eventId;
     this.occurredAt = occurredAt;
   }

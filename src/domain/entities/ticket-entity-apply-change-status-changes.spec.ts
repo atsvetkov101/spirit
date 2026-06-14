@@ -31,10 +31,11 @@ function makeTicket(overrides?: Partial<TicketImportDto>): TicketEntity {
 }
 
 function makeUpdateData(overrides?: Partial<TicketUpdateData>): TicketUpdateData {
-  const data = new TicketUpdateData();
-  data.status = TicketStatus.Assigned;
-  data.service = undefined;
-  return { ...data, ...overrides };
+  const data = new TicketUpdateData(
+    overrides?.status ?? TicketStatus.Assigned,
+    overrides?.service,
+  );
+  return data;
 }
 
 describe('TicketEntity.applyChangeStatusChanges', () => {

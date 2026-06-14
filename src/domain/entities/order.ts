@@ -73,6 +73,11 @@ export class Order {
         this.events.push(event);
     }
 
+    сlearDomainEvents()
+    {
+        this.events.length = 0;
+    }
+
     confirm(){
       if (this.items.length === 0) {
         throw new Error('Невозможно подтвердить пустой заказ');

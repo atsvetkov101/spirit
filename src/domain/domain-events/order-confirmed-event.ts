@@ -15,4 +15,7 @@ export class OrderConfirmedEvent extends DomainEvent {
   getOrderId() {
     return this.orderId;
   }
+  get Name() {
+    return "OrderConfirmedEvent";
+  }
 }
