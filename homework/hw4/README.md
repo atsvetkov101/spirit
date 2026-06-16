@@ -13,3 +13,6 @@
 \src\domain\entities\order.ts
 
 ## 4. Обработка события
+
+SendEmailOnOrderConfirmedHandler
+\src\application\order\confirm-order\send-email-on-order-confirmed-handler.ts
