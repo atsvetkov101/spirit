@@ -31,6 +31,8 @@ export class TicketAppService {
 
     const res = await this.ticketDomainService.changeStatus(ticket, newData, checkListUserData);
 
+    await this.ticketRepository.save(ticket);
+
     return Promise.resolve(res.ticket.getId());
   }
 

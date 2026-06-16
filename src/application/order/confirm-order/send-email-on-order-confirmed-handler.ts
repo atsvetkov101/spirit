@@ -1,7 +1,8 @@
 import { OrderConfirmedEvent } from "../../../domain/domain-events/order-confirmed-event";
+import { INotificationService } from "../ports/inotification-service";
 
 export class SendEmailOnOrderConfirmedHandler {
-  constructor(private notificationService: any) {} // Например, Email-сервис
+  constructor(private readonly notificationService: INotificationService) {} // Например, Email-сервис
 
   async handle(event: OrderConfirmedEvent): Promise<void> {
     const orderId = event.getOrderId();
@@ -11,6 +12,10 @@ export class SendEmailOnOrderConfirmedHandler {
     const customerEmail = 'test@test.ru';
 
     // Логика отправки email
-    // ... notificationService.sendEmail(...);
+    this.notificationService.sendEmail(
+      customerEmail,
+      'Заказ подтвержден',
+      `Заказ ${orderId} подтвержден`,
+    );
   }
 }

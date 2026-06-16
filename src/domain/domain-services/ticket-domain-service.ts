@@ -11,7 +11,7 @@ export class TicketDomainService {
 
     public async changeStatus(ticket: TicketEntity, newData: TicketUpdateData, checkListUserData: CheckListUserData | undefined) {
 
-        if(ticket.statusChangeAllowed(newData.status)) {
+        if(!ticket.statusChangeAllowed(newData.status)) {
           throw new Error('Такое изменение статуса не поддерживается');
         }
         // Если тикет закрывается, то создаем чек-лист, чтобы его сохранить

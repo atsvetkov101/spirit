@@ -3,6 +3,7 @@ import TicketStatus from '../vo/ticket-status';
 import { TicketImportDto } from '@/contracts/consumer/ticket-import.dto';
 import { TicketUpdateData } from '../vo/ticket-update-data';
 import { TicketStatusChangedEvent } from '../domain-events/ticket-status-changed-event';
+import { TicketServiceChangedEvent } from '../domain-events/ticket-service-changed-event';
 
 function makeTicket(overrides?: Partial<TicketImportDto>): TicketEntity {
   const dto: TicketImportDto = {
@@ -125,34 +126,95 @@ describe('TicketEntity.applyChangeStatusChanges', () => {
   });
 
   describe('взаимодействие с setService', () => {
-    it('должен вызвать setService с текущим сервисом, если service задан и is_service_change_available = true', () => {
+    it('должен изменить сервис на новое значение, если service передан в updateData', () => {
       const ticket = makeTicket({
         status: TicketStatus.New,
         service: 'service-1',
         is_service_change_available: true,
       });
-      const updateData = makeUpdateData({ status: TicketStatus.Assigned });
+      const updateData = makeUpdateData({
+        status: TicketStatus.Assigned,
+        service: 'service-2',
+      });
 
-      // setService вызывается с this.service (текущий сервис) — это текущее поведение кода
-      // Поскольку сервис не меняется, setService бросит ошибку
+      ticket.applyChangeStatusChanges(updateData);
+
+      expect(ticket.getStatus()).toBe(TicketStatus.Assigned);
+      expect(ticket.getService()).toBe('service-2');
+    });
+
+    it('должен добавить TicketServiceChangedEvent при смене сервиса через updateData', () => {
+      const ticket = makeTicket({
+        status: TicketStatus.New,
+        service: 'service-1',
+        is_service_change_available: true,
+      });
+      const updateData = makeUpdateData({
+        status: TicketStatus.Assigned,
+        service: 'service-2',
+      });
+
+      ticket.applyChangeStatusChanges(updateData);
+
+      const events = (ticket as any).events;
+      expect(events).toHaveLength(2);
+      expect(events[0]).toBeInstanceOf(TicketStatusChangedEvent);
+      expect(events[1]).toBeInstanceOf(TicketServiceChangedEvent);
+    });
+
+    it('должен бросить ошибку, если service в updateData совпадает с текущим', () => {
+      const ticket = makeTicket({
+        status: TicketStatus.New,
+        service: 'service-1',
+        is_service_change_available: true,
+      });
+      const updateData = makeUpdateData({
+        status: TicketStatus.Assigned,
+        service: 'service-1',
+      });
+
       expect(() => ticket.applyChangeStatusChanges(updateData)).toThrow(
         'Для изменения сервиса новое значение должно отличаться от текущего',
       );
     });
 
-    it('должен бросить ошибку из setService, если сервис не меняется (текущее поведение кода)', () => {
+    it('должен бросить ошибку, если is_service_change_available = false', () => {
       const ticket = makeTicket({
         status: TicketStatus.New,
         service: 'service-1',
         is_service_change_available: false,
       });
-      const updateData = makeUpdateData({ status: TicketStatus.Assigned });
+      const updateData = makeUpdateData({
+        status: TicketStatus.Assigned,
+        service: 'service-2',
+      });
 
-      // В текущем коде applyChangeStatusChanges вызывает this.setService(this.service)
-      // с тем же значением, поэтому setService падает раньше проверки is_service_change_available
       expect(() => ticket.applyChangeStatusChanges(updateData)).toThrow(
-        'Для изменения сервиса новое значение должно отличаться от текущего',
+        'Смена сервиса не доступна',
       );
+    });
+
+    it('не должен менять сервис при ошибке смены сервиса (статус уже изменён до вызова setService)', () => {
+      const ticket = makeTicket({
+        status: TicketStatus.New,
+        service: 'service-1',
+        is_service_change_available: false,
+      });
+      const updateData = makeUpdateData({
+        status: TicketStatus.Assigned,
+        service: 'service-2',
+      });
+
+      try {
+        ticket.applyChangeStatusChanges(updateData);
+      } catch {
+        // ignore
+      }
+
+      // Статус меняется до вызова setService, поэтому он уже изменён
+      expect(ticket.getStatus()).toBe(TicketStatus.Assigned);
+      // Сервис не должен измениться, так как setService выбросил ошибку
+      expect(ticket.getService()).toBe('service-1');
     });
   });
 

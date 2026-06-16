@@ -52,6 +52,44 @@ export class TicketEntity {
         return new TicketEntity(dto);
     }
 
+    public static fromDb(data: {
+        id: string;
+        consumer_id: number;
+        consumer_email: string;
+        assignee_id: number;
+        status: string;
+        service: string;
+        created_by: number;
+        created_time: Date;
+        deadline: Date;
+        act_type: string;
+        wiki_link: string;
+        is_service_change_available: boolean;
+    }): TicketEntity {
+        const dto: TicketImportDto = {
+            id: data.id,
+            consumer_id: data.consumer_id,
+            consumer_email: data.consumer_email,
+            assignee_id: data.assignee_id,
+            status: data.status,
+            service: data.service,
+            created_by: data.created_by,
+            created_time: data.created_time.toISOString(),
+            deadline: data.deadline.toISOString(),
+            act_type: data.act_type,
+            wiki_link: data.wiki_link,
+            is_service_change_available: data.is_service_change_available,
+            service_object: {
+                address: '',
+                name: '',
+                search_code: '',
+                coords: { lat: '', lng: '' },
+                phone_number: '',
+            },
+        };
+        return new TicketEntity(dto);
+    }
+
     getId(): string {
         return this.id;
     }
@@ -121,7 +159,6 @@ export class TicketEntity {
      * Смена сервиса у заявки происходит в том случае если по факту прибытия на место, исполнитель выяснил
      * , что заявка заведена не верно и требуется изменить сервис
      */
-
     setService(newService: string) {
       if(this.service !== newService) {
         if(!this.is_service_change_available) {
@@ -152,8 +189,8 @@ export class TicketEntity {
         );
 
         // если передано изменение сервиса, то меняем сервис
-        if(this.service){
-          this.setService(this.service);
+        if(newData.service){
+          this.setService(newData.service);
         }
     }
 

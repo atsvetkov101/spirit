@@ -89,4 +89,8 @@ export class Order {
       this.status = OrderStatus.Confirmed;
       this.addDomainEvent(new OrderConfirmedEvent({ orderId: this.id }));
     }
+
+    getDomainEvents(): ReadonlyArray<DomainEvent> {
+      return [...this.events];
+    }
 }
