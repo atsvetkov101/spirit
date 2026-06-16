@@ -1,7 +1,7 @@
 import { TicketEntity } from '@/domain/entities/ticket-entity';
-import { Ticket, TicketCreationAttributes } from '@/models/ticket.model';
+import { Ticket, TicketAttributes, TicketCreationAttributes } from '@/models/ticket.model';
 import { Transaction } from 'sequelize';
-import { ITicketRepository } from '@/domain/interfaces/iticket-repository';
+import { ITicketRepository } from '@/domain/repository/iticket-repository';
 
 export class TicketRepository implements ITicketRepository {
   async save(aggregate: TicketEntity, transaction: Transaction | null = null): Promise<void> {
@@ -24,17 +24,24 @@ export class TicketRepository implements ITicketRepository {
   }
 
   async findById(id: string): Promise<TicketEntity | null> {
-    // TODO: Implement
-    throw new Error('Method not implemented.');
+    const ticket = await Ticket.findByPk(id);
+
+    if (!ticket) {
+      return null;
+    }
+
+    return TicketEntity.fromDb(ticket.toJSON() as unknown as TicketAttributes);
   }
 
   async findAll(): Promise<TicketEntity[]> {
-    // TODO: Implement
-    throw new Error('Method not implemented.');
+    const tickets = await Ticket.findAll();
+
+    return tickets.map((ticket) =>
+      TicketEntity.fromDb(ticket.toJSON() as unknown as TicketAttributes),
+    );
   }
 
   async delete(id: string): Promise<void> {
-    // TODO: Implement
-    throw new Error('Method not implemented.');
+    await Ticket.destroy({ where: { id } });
   }
 }

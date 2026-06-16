@@ -15,8 +15,8 @@ export class TicketImportDto {
 
   readonly created_time: string; // datetime as ISO string
 
+  
   readonly deadline: string; // datetime as ISO string
-
   readonly act_type: string;
 
   readonly wiki_link: string;
