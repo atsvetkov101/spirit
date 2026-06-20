@@ -7,9 +7,10 @@ export interface OrderAttributes {
   status: string;
   created_at?: Date;
   updated_at?: Date;
+  lockVersion?: number;
 }
 
-export interface OrderCreationAttributes extends Optional<OrderAttributes, 'id' | 'status' | 'created_at' | 'updated_at'> {}
+export interface OrderCreationAttributes extends Optional<Omit<OrderAttributes, 'lockVersion'>, 'id' | 'status' | 'created_at' | 'updated_at'> {}
 
 export class OrderModel
   extends Model<OrderAttributes, OrderCreationAttributes>
@@ -36,6 +37,12 @@ OrderModel.init(
       allowNull: false,
       defaultValue: 'CREATED',
     },
+    lockVersion: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+      field: 'version', // Имя физической колонки в таблице БД
+    },
   },
   {
     sequelize,
@@ -43,6 +50,7 @@ OrderModel.init(
     timestamps: true,
     createdAt: 'created_at',
     updatedAt: 'updated_at',
+    version: 'lockVersion',
   }
 );
 
