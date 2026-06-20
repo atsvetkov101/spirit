@@ -1,5 +1,5 @@
 import { ServiceObjectEntity } from '@/domain/entities/service-object-entity';
-import { ServiceObject, ServiceObjectCreationAttributes } from '@/models/service-object.model';
+import { ServiceObject, ServiceObjectCreationAttributes } from '@/infrastructure/database/models/service-object.model';
 import { Transaction } from 'sequelize';
 import { IServiceObjectRepository } from '@/domain/repository/iservice-object-repository';
 

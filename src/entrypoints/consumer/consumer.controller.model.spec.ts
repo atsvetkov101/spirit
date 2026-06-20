@@ -26,8 +26,8 @@ jest.mock('../../database', () => ({
   },
 }));
 
-import { Ticket } from '../../models/ticket.model';
-import { ServiceObject } from '../../models/service-object.model';
+import { Ticket } from '../../infrastructure/database/models/ticket.model';
+import { ServiceObject } from '../../infrastructure/database/models/service-object.model';
 import { sequelize } from '../../infrastructure/database/database';
 
 const MockTicket = Ticket as jest.Mocked<typeof Ticket>;
