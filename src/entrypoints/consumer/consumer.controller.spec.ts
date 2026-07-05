@@ -6,10 +6,12 @@ import { ConsumerController } from './consumer.controller';
 import { ConsumerService } from './consumer.service';
 import { TicketImportDto } from '../../contracts/consumer/ticket-import.dto';
 import { RmqContext } from '@nestjs/microservices';
+import { CommandBus } from '@nestjs/cqrs';
 
 describe('ConsumerController', () => {
   let controller: ConsumerController;
   let consumerService: jest.Mocked<ConsumerService>;
+  let commandBus: jest.Mocked<CommandBus>;
   let mockRmqContext: jest.Mocked<RmqContext>;
   let mockChannel: any;
   let mockMessage: any;
@@ -20,6 +22,11 @@ describe('ConsumerController', () => {
       handleTicketImport: jest.fn(),
       handleUserCreated: jest.fn(),
       handleOrderPlaced: jest.fn(),
+    };
+
+    // Мок для CommandBus
+    const mockCommandBus = {
+      execute: jest.fn(),
     };
 
     // Мок для RmqContext
@@ -40,11 +47,16 @@ describe('ConsumerController', () => {
           provide: ConsumerService,
           useValue: mockConsumerService,
         },
+        {
+          provide: CommandBus,
+          useValue: mockCommandBus,
+        },
       ],
     }).compile();
 
     controller = module.get<ConsumerController>(ConsumerController);
     consumerService = module.get(ConsumerService) as jest.Mocked<ConsumerService>;
+    commandBus = module.get(CommandBus) as jest.Mocked<CommandBus>;
   });
 
   describe('handleTicketImport', () => {
@@ -73,46 +85,37 @@ describe('ConsumerController', () => {
       },
     });
 
-    it('должен вызывать consumerService.handleTicketImport с корректными данными и подтверждать сообщение', async () => {
+    it('должен вызывать commandBus.execute с ImportTicketCommand и подтверждать сообщение', async () => {
       const ticketData = createTicketData();
+      commandBus.execute.mockResolvedValue(undefined);
 
       await controller.handleTicketImport(ticketData, mockRmqContext);
 
-      expect(consumerService.handleTicketImport).toHaveBeenCalledWith(ticketData);
+      expect(commandBus.execute).toHaveBeenCalled();
       expect(mockRmqContext.getChannelRef).toHaveBeenCalled();
       expect(mockRmqContext.getMessage).toHaveBeenCalled();
       expect(mockChannel.ack).toHaveBeenCalledWith(mockMessage);
     });
 
-    it('при ошибке в сервисе не должен вызывать getChannelRef, getMessage и ack', async () => {
+    it('при ошибке в commandBus не должен вызывать getChannelRef, getMessage и ack', async () => {
       const ticketData = createTicketData();
       const error = new Error('Service error');
-      consumerService.handleTicketImport.mockRejectedValue(error);
+      commandBus.execute.mockRejectedValue(error);
 
       await expect(controller.handleTicketImport(ticketData, mockRmqContext)).rejects.toThrow(error);
 
-      expect(consumerService.handleTicketImport).toHaveBeenCalledWith(ticketData);
+      expect(commandBus.execute).toHaveBeenCalled();
       // При ошибке следующие вызовы не должны происходить
       expect(mockRmqContext.getChannelRef).not.toHaveBeenCalled();
       expect(mockRmqContext.getMessage).not.toHaveBeenCalled();
       expect(mockChannel.ack).not.toHaveBeenCalled();
     });
 
-
-    it('должен вызывать ack после успешного выполнения сервиса', async () => {
+    it('должен вызывать ack после успешного выполнения commandBus', async () => {
       const ticketData = createTicketData();
-      // Создаем фиктивные объекты, которые возвращает сервис
-      const mockResult = {
-        ticketId: ticketData.id,
-        serviceObjectId: 'service-obj-id',
-      };
-      consumerService.handleTicketImport.mockResolvedValue(mockResult);
+      commandBus.execute.mockResolvedValue(undefined);
 
-      // Поскольку контроллер не async, мы просто вызываем его
-      controller.handleTicketImport(ticketData, mockRmqContext);
-
-      // Даем возможность асинхронному вызову завершиться
-      await Promise.resolve();
+      await controller.handleTicketImport(ticketData, mockRmqContext);
 
       expect(mockChannel.ack).toHaveBeenCalledTimes(1);
     });

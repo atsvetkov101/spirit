@@ -197,4 +197,12 @@ export class TicketEntity {
     addDomainEvent(event: DomainEvent) {
         this.events.push(event);
     }
+
+    getDomainEvents(): ReadonlyArray<DomainEvent> {
+      return [...this.events];
+    }
+
+    сlearDomainEvents() {
+      this.events.length = 0;
+    }
 }

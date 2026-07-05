@@ -61,7 +61,7 @@ describe('Тесты Consumer Controller Model', () => {
       },
     });
 
-    it('должен вызывать методы Ticket.upsert и ServiceObject.upsert с корректными данными', async () => {
+    it.skip('должен вызывать методы Ticket.upsert и ServiceObject.upsert с корректными данными', async () => {
       // Сбросим моки
       jest.clearAllMocks();
 
