@@ -10,17 +10,17 @@ import { TicketRepository } from '@/infrastructure/repository/ticket-repository'
 import { ServiceObjectRepository } from '@/infrastructure/repository/service-object-repository';
 
 // Моки для моделей и sequelize
-jest.mock('../../models/ticket.model', () => ({
+jest.mock('../../infrastructure/database/models/ticket.model', () => ({
   Ticket: {
     upsert: jest.fn(),
   },
 }));
-jest.mock('../../models/service-object.model', () => ({
+jest.mock('../../infrastructure/database/models/service-object.model', () => ({
   ServiceObject: {
     upsert: jest.fn(),
   },
 }));
-jest.mock('../../database', () => ({
+jest.mock('../../infrastructure/database/database', () => ({
   sequelize: {
     transaction: jest.fn(),
   },
