@@ -27,9 +27,11 @@ const syncDatabase = async () => {
   try {
     await sequelize.authenticate();
     console.log('Database connection established successfully.');
-    
+    const modelNames = Object.values(sequelize.models).map(model => model.name).join(', ');
+
     // В development режиме можно синхронизировать, в production - использовать миграции
     if (process.env.NODE_ENV === 'development') {
+       console.log(`Загружены модели: ${modelNames}. Начинаем синхронизацию базы данных...`);
       await sequelize.sync({ alter: true });
       console.log('Database synchronized.');
     }

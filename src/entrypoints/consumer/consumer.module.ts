@@ -1,24 +1,13 @@
 import { Module, OnModuleInit } from '@nestjs/common';
-import { ConsumerService, TICKET_REPOSITORY, SERVICE_OBJECT_REPOSITORY } from './consumer.service';
+import { ConsumerService } from './consumer.service';
 import { ConsumerController } from './consumer.controller';
-import { syncDatabase } from '../../database';
-import { TicketRepository } from '@/infrastructure/repository/ticket-repository';
-import { ServiceObjectRepository } from '@/infrastructure/repository/service-object-repository';
+import { syncDatabase } from '../../infrastructure/database/database';
+import { AppCqrsModule } from '@/application/cqrs.module';
 
 @Module({
-  imports: [],
+  imports: [AppCqrsModule],
   controllers: [ConsumerController],
-  providers: [
-    ConsumerService,
-    {
-      provide: TICKET_REPOSITORY,
-      useClass: TicketRepository,
-    },
-    {
-      provide: SERVICE_OBJECT_REPOSITORY,
-      useClass: ServiceObjectRepository,
-    },
-  ],
+  providers: [ConsumerService],
 })
 export class ConsumerModule implements OnModuleInit {
   async onModuleInit() {

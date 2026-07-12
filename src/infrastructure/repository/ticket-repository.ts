@@ -1,5 +1,5 @@
 import { TicketEntity } from '@/domain/entities/ticket-entity';
-import { Ticket, TicketAttributes, TicketCreationAttributes } from '@/models/ticket.model';
+import { Ticket, TicketAttributes, TicketCreationAttributes } from '@/infrastructure/database/models/ticket.model';
 import { Transaction } from 'sequelize';
 import { ITicketRepository } from '@/domain/repository/iticket-repository';
 

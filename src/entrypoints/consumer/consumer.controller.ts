@@ -1,11 +1,16 @@
 import { Controller, Get } from '@nestjs/common';
 import { EventPattern, Payload, Ctx, RmqContext } from '@nestjs/microservices';
+import { CommandBus } from '@nestjs/cqrs';
 import { ConsumerService } from './consumer.service';
 import { TicketImportDto } from '../../contracts/consumer/ticket-import.dto';
+import { ImportTicketCommand } from '@/application/ticket/commands/import-ticket.command';
 
 @Controller()
 export class ConsumerController {
-  constructor(private readonly consumerService: ConsumerService) {}
+  constructor(
+    private readonly consumerService: ConsumerService,
+    private readonly commandBus: CommandBus,
+  ) {}
 
   @Get('health')
   health() {
@@ -30,7 +35,8 @@ export class ConsumerController {
 
   @EventPattern('ticket_import')
   async handleTicketImport(@Payload() data: TicketImportDto, @Ctx() context: RmqContext) {
-    await this.consumerService.handleTicketImport(data);
+    const command = new ImportTicketCommand(data);
+    await this.commandBus.execute(command);
     const channel = context.getChannelRef();
     const originalMessage = context.getMessage();
     channel.ack(originalMessage);

@@ -1,5 +1,7 @@
 import { IDomainEvent } from "./idomain-event";
 
+export const EVENT_BUS = Symbol('EVENT_BUS');
+
 export interface IEventBus {
   /**
    * Публикует одно доменное событие
